@@ -7,7 +7,7 @@ export default function ElephantCampaignLanding() {
   // JavaScript State: Short-term memory to handle form inputs
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formSubmitted, setFormSubmitted] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // JavaScript Handler: Manages changes inside the form fields
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
