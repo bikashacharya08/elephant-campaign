@@ -20,7 +20,7 @@ export default function ElephantCampaignLanding() {
 
   try {
     // Send the form data to our fresh XAMPP Laravel API endpoint
-    const response = await fetch('http://127.0.0.1:8000/api/volunteer', {
+    const response = await fetch('https://elephant-campaign-production.up.railway.app/api/volunteer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
