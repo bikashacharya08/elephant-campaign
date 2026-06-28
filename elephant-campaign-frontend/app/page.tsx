@@ -19,6 +19,7 @@ export default function ElephantCampaignLanding() {
   e.preventDefault();
 
   try {
+    setIsSubmitting(true);
     // Send the form data to our fresh XAMPP Laravel API endpoint
     const response = await fetch('https://elephant-campaign-production.up.railway.app/api/volunteer', {
       method: 'POST',
@@ -41,6 +42,9 @@ export default function ElephantCampaignLanding() {
     console.error('API Error:', error);
     alert('Could not connect to the backend server. Make sure php artisan serve is running!');
   }
+    finally {
+      setIsSubmitting(false);
+    }
 };
 
   return (
