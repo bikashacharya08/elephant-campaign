@@ -255,9 +255,11 @@ export default function ElephantCampaignLanding() {
               </div>
               <button 
                 type="submit" 
-                className="w-full bg-stone-900 hover:bg-stone-850 text-white font-semibold py-2.5 rounded-lg text-sm transition"
+                disabled={isSubmitting}
+                className="w-full bg-[#1a1a1a] text-white py-3 px-6 rounded-md font-semibold hover:bg-black transition-all duration-200"
+                style={{ transform: isSubmitting ? 'scale(0.98)' : 'scale(1)' }}
               >
-                Submit Application
+                {isSubmitting ? 'Submitting...' : 'Submit Application'}
               </button>
             </form>
           )}
