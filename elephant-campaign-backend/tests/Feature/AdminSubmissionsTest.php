@@ -155,4 +155,65 @@ class AdminSubmissionsTest extends TestCase
         $this->assertEquals('Aarav Sharma', $response->json('submissions.0.name'));
         $this->assertEquals('Sita Adhikari', $response->json('submissions.1.name'));
     }
+
+    /**
+     * Test admin can delete a submission with a valid token.
+     */
+    public function test_admin_can_delete_submission_with_valid_token(): void
+    {
+        $volunteer = Volunteer::create([
+            'name' => 'To Be Deleted',
+            'email' => 'delete@example.com',
+            'type' => 'volunteer',
+            'message' => 'Temp message',
+        ]);
+
+        $response = $this->deleteJson("/api/admin/submissions/{$volunteer->id}", [], [
+            'X-Admin-Token' => $this->token
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Submission deleted successfully.'
+        ]);
+
+        $this->assertDatabaseMissing('volunteers', [
+            'id' => $volunteer->id
+        ]);
+    }
+
+    /**
+     * Test admin cannot delete a submission without token.
+     */
+    public function test_admin_cannot_delete_submission_without_token(): void
+    {
+        $volunteer = Volunteer::create([
+            'name' => 'Protected Record',
+            'email' => 'protected@example.com',
+            'type' => 'volunteer',
+            'message' => 'Temp message',
+        ]);
+
+        $response = $this->deleteJson("/api/admin/submissions/{$volunteer->id}");
+
+        $response->assertStatus(401);
+        $this->assertDatabaseHas('volunteers', [
+            'id' => $volunteer->id
+        ]);
+    }
+
+    /**
+     * Test admin cannot delete a non-existent submission.
+     */
+    public function test_admin_cannot_delete_non_existent_submission(): void
+    {
+        $response = $this->deleteJson('/api/admin/submissions/99999', [], [
+            'X-Admin-Token' => $this->token
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Submission not found.'
+        ]);
+    }
 }

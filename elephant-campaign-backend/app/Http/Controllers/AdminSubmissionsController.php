@@ -34,4 +34,24 @@ class AdminSubmissionsController extends Controller
             'count' => $submissions->count()
         ], 200);
     }
+
+    /**
+     * Remove the specified submission from the database.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $volunteer = Volunteer::find($id);
+
+        if (!$volunteer) {
+            return response()->json([
+                'message' => 'Submission not found.'
+            ], 404);
+        }
+
+        $volunteer->delete();
+
+        return response()->json([
+            'message' => 'Submission deleted successfully.'
+        ], 200);
+    }
 }

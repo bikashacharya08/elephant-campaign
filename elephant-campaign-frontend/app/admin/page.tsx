@@ -14,7 +14,12 @@ import {
   FileText,
   AlertCircle,
   X,
-  Sparkles
+  Sparkles,
+  Trash2,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw
 } from 'lucide-react';
 
 interface Submission {
@@ -39,6 +44,14 @@ export default function AdminPortal() {
   const [filterType, setFilterType] = useState<'all' | 'volunteer' | 'booking' | 'donation'>('all');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Deletion states
+  const [subToDelete, setSubToDelete] = useState<Submission | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const validateAndFetch = async (tokenToCheck: string) => {
     setIsLoading(true);
@@ -113,6 +126,71 @@ export default function AdminPortal() {
     setIsAuthenticated(false);
   };
 
+  // Delete submission handler
+  const handleDeleteSubmission = async (id: number) => {
+    setIsDeleting(true);
+    const savedToken = sessionStorage.getItem('adminToken') || '';
+    const baseApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = !baseApiUrl || baseApiUrl === 'undefined' || baseApiUrl.trim() === '' ? 'http://localhost:8000/api' : baseApiUrl;
+
+    try {
+      const response = await fetch(`${apiUrl}/admin/submissions/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'X-Admin-Token': savedToken
+        }
+      });
+
+      if (response.ok) {
+        setSubmissions(prev => prev.filter(sub => sub.id !== id));
+        setSubToDelete(null);
+        setSelectedSub(null); // Close details modal if open
+      } else {
+        const errorData = await response.json();
+        alert('Delete failed: ' + (errorData.message || 'Server error.'));
+      }
+    } catch (error) {
+      console.error('Delete Error:', error);
+      alert('Could not connect to server to delete submission.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Export Filtered Submissions to CSV
+  const handleExportCSV = () => {
+    if (filteredSubmissions.length === 0) {
+      alert('No records available to export.');
+      return;
+    }
+
+    const headers = ['ID', 'Name', 'Email', 'Type', 'Booking Date', 'Guests', 'Donation Amount (Rs.)', 'Message', 'Submitted At'];
+    
+    const rows = filteredSubmissions.map(sub => [
+      sub.id,
+      `"${sub.name.replace(/"/g, '""')}"`,
+      sub.email,
+      sub.type,
+      sub.date || '',
+      sub.guests || '',
+      sub.amount || '',
+      `"${sub.message.replace(/"/g, '""')}"`,
+      sub.created_at
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' 
+      + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `chain_free_submissions_${filterType}_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Helper to format date strings
   const formatDate = (dateStr: string) => {
     try {
@@ -163,6 +241,21 @@ export default function AdminPortal() {
       const dateB = new Date(b.created_at).getTime();
       return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
     });
+
+  // Reset pagination dynamically if filtered records size shrinks
+  const totalPages = Math.max(1, Math.ceil(filteredSubmissions.length / itemsPerPage));
+  const activePage = Math.min(currentPage, totalPages);
+
+  // Paginated View Slicing
+  const startIndex = (activePage - 1) * itemsPerPage;
+  const paginatedSubmissions = filteredSubmissions.slice(startIndex, startIndex + itemsPerPage);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setFilterType('all');
+    setSortOrder('desc');
+    setCurrentPage(1);
+  };
 
   if (!isAuthenticated) {
     /* LOGIN LOCKSCREEN GATE */
@@ -304,11 +397,11 @@ export default function AdminPortal() {
               {(['all', 'volunteer', 'booking', 'donation'] as const).map(type => (
                 <button
                   key={type}
-                  onClick={() => setFilterType(type)}
+                  onClick={() => { setFilterType(type); setCurrentPage(1); }}
                   className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition rounded-lg border ${
                     filterType === type
                       ? 'bg-emerald-850 dark:bg-emerald-800 border-emerald-800 text-white shadow-sm'
-                      : 'bg-transparent text-stone-500 dark:text-stone-400 border-transparent hover:text-stone-700 dark:hover:text-stone-300'
+                      : 'bg-transparent text-stone-500 dark:text-stone-400 border-transparent hover:text-stone-700 dark:hover:text-stone-305'
                   }`}
                 >
                   {type === 'all' ? 'All Forms' : type + 's'}
@@ -316,26 +409,46 @@ export default function AdminPortal() {
               ))}
             </div>
 
-            {/* Right Control Actions (Search & Sort) */}
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 md:w-64">
+            {/* Right Control Actions (Search, Sort, Export, Clear) */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative flex-1 min-w-[180px] md:w-64">
                 <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
                 <input 
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                   placeholder="Search name, email, msg..."
-                  className="w-full pl-9 pr-4 py-2 bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-white border border-stone-300 dark:border-stone-750 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700/50 focus:border-emerald-700 dark:focus:border-emerald-500 transition"
+                  className="w-full pl-9 pr-4 py-2.5 bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-white border border-stone-300 dark:border-stone-750 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700/50 focus:border-emerald-700 dark:focus:border-emerald-500 transition"
                 />
               </div>
+
+              {/* Reset Filters */}
+              {(searchQuery || filterType !== 'all' || sortOrder !== 'desc') && (
+                <button
+                  onClick={resetFilters}
+                  className="p-2.5 border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-500 dark:text-stone-400 transition"
+                  title="Clear Filters"
+                >
+                  <RefreshCw className="w-4 h-4 animate-spin-once" />
+                </button>
+              )}
 
               {/* Sort Order Action */}
               <button
                 onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                className="p-2 border border-stone-300 dark:border-stone-750 bg-stone-50 dark:bg-stone-950 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-500 dark:text-stone-400 transition"
+                className="p-2.5 border border-stone-300 dark:border-stone-750 bg-stone-50 dark:bg-stone-950 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-500 dark:text-stone-400 transition"
                 title="Sort by Date"
               >
                 <ArrowUpDown className="w-4 h-4" />
+              </button>
+
+              {/* Export to CSV */}
+              <button
+                onClick={handleExportCSV}
+                className="p-2.5 border border-emerald-600/25 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition flex items-center gap-1.5 text-xs font-bold"
+                title="Export list to CSV (Excel)"
+              >
+                <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export</span>
               </button>
             </div>
 
@@ -354,14 +467,14 @@ export default function AdminPortal() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200 dark:divide-stone-800 bg-white dark:bg-stone-900 transition-colors">
-                {filteredSubmissions.length === 0 ? (
+                {paginatedSubmissions.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-stone-450 dark:text-stone-500 font-light">
                       No records match the current filter criteria or search query.
                     </td>
                   </tr>
                 ) : (
-                  filteredSubmissions.map((sub) => (
+                  paginatedSubmissions.map((sub) => (
                     <tr key={sub.id} className="hover:bg-stone-50/50 dark:hover:bg-stone-850/20 transition duration-150">
                       {/* Submitter Details */}
                       <td className="px-6 py-4 space-y-0.5">
@@ -394,7 +507,7 @@ export default function AdminPortal() {
                           <span className="italic font-light">Application form</span>
                         )}
                         {sub.type === 'booking' && (
-                          <div className="space-y-0.5">
+                          <div className="space-y-0.5 text-[11px]">
                             <p><span className="text-stone-400">Date:</span> {sub.date}</p>
                             <p><span className="text-stone-400">Guests:</span> {sub.guests}</p>
                           </div>
@@ -411,14 +524,24 @@ export default function AdminPortal() {
                         {formatDate(sub.created_at)}
                       </td>
 
-                      {/* Actions */}
+                      {/* Actions (View and Delete) */}
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => setSelectedSub(sub)}
-                          className="inline-flex items-center gap-1 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-750 text-stone-700 dark:text-stone-300 font-semibold px-3 py-1.5 rounded-lg transition"
-                        >
-                          <Eye className="w-3.5 h-3.5" /> View
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setSelectedSub(sub)}
+                            className="inline-flex items-center gap-1 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-750 text-stone-700 dark:text-stone-300 font-semibold px-2.5 py-1.5 rounded-lg transition"
+                            title="View submission details"
+                          >
+                            <Eye className="w-3.5 h-3.5" /> <span className="hidden sm:inline">View</span>
+                          </button>
+                          <button
+                            onClick={() => setSubToDelete(sub)}
+                            className="inline-flex items-center gap-1 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 text-red-650 dark:text-red-400 font-semibold p-1.5 rounded-lg transition"
+                            title="Delete submission record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -426,6 +549,90 @@ export default function AdminPortal() {
               </tbody>
             </table>
           </div>
+
+          {/* PAGINATION PANEL FOOTER */}
+          {filteredSubmissions.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between border-t dark:border-stone-800 pt-4 gap-4">
+              
+              {/* Items Per Page Selector */}
+              <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+                <span>Show</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(parseInt(e.target.value, 10));
+                    setCurrentPage(1);
+                  }}
+                  className="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-white border border-stone-300 dark:border-stone-750 px-2 py-1 rounded focus:outline-none focus:ring-1 focus:ring-emerald-700/50"
+                >
+                  <option value={5}>5 entries</option>
+                  <option value={10}>10 entries</option>
+                  <option value={25}>25 entries</option>
+                  <option value={50}>50 entries</option>
+                </select>
+                <span>of {filteredSubmissions.length} records</span>
+              </div>
+
+              {/* Showing Metrics text */}
+              <div className="text-xs text-stone-400 dark:text-stone-500">
+                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredSubmissions.length)} of {filteredSubmissions.length} entries
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center gap-1">
+                {/* Back button */}
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, activePage - 1))}
+                  disabled={activePage === 1}
+                  className="p-2 border border-stone-200 dark:border-stone-800 rounded-lg bg-stone-50 dark:bg-stone-950 hover:bg-stone-100 dark:hover:bg-stone-850 disabled:opacity-40 transition text-stone-500 dark:text-stone-400"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }).map((_, idx) => {
+                  const pageNum = idx + 1;
+                  // Only display surrounding pages to prevent overflow when there are many pages
+                  if (
+                    totalPages > 5 &&
+                    pageNum !== 1 &&
+                    pageNum !== totalPages &&
+                    Math.abs(activePage - pageNum) > 1
+                  ) {
+                    // Render ellipses
+                    if (pageNum === 2 || pageNum === totalPages - 1) {
+                      return <span key={pageNum} className="px-2 text-stone-400">...</span>;
+                    }
+                    return null;
+                  }
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+                        activePage === pageNum
+                          ? 'bg-emerald-850 dark:bg-emerald-800 text-white'
+                          : 'bg-stone-50 hover:bg-stone-100 dark:bg-stone-950 dark:hover:bg-stone-850 border dark:border-stone-800 text-stone-700 dark:text-stone-300'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                {/* Next button */}
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, activePage + 1))}
+                  disabled={activePage === totalPages}
+                  className="p-2 border border-stone-200 dark:border-stone-800 rounded-lg bg-stone-50 dark:bg-stone-950 hover:bg-stone-100 dark:hover:bg-stone-850 disabled:opacity-40 transition text-stone-500 dark:text-stone-400"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+            </div>
+          )}
+
         </div>
 
       </main>
@@ -460,22 +667,22 @@ export default function AdminPortal() {
             <div className="p-6 space-y-5 overflow-y-auto text-stone-700 dark:text-stone-300 text-xs">
               <div className="grid grid-cols-2 gap-4 border-b dark:border-stone-850 pb-4">
                 <div>
-                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Full Name</span>
+                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Full Name</span>
                   <span className="font-bold text-stone-900 dark:text-white text-sm">{selectedSub.name}</span>
                 </div>
                 <div>
-                  <span className="block text-[9px] uppercase tracking-wider text-stone-405 font-bold">Email Address</span>
+                  <span className="block text-[9px] uppercase tracking-wider text-stone-405 font-bold font-mono">Email Address</span>
                   <a href={`mailto:${selectedSub.email}`} className="text-emerald-700 dark:text-emerald-450 hover:underline font-medium text-sm">{selectedSub.email}</a>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 border-b dark:border-stone-850 pb-4">
                 <div>
-                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Submission Type</span>
+                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Submission Type</span>
                   <span className="capitalize font-semibold">{selectedSub.type}</span>
                 </div>
                 <div>
-                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Received Date</span>
+                  <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Received Date</span>
                   <span>{formatDate(selectedSub.created_at)}</span>
                 </div>
               </div>
@@ -484,11 +691,11 @@ export default function AdminPortal() {
               {selectedSub.type === 'booking' && (
                 <div className="grid grid-cols-2 gap-4 border-b dark:border-stone-850 pb-4">
                   <div>
-                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Scheduled Visit Date</span>
+                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Scheduled Visit Date</span>
                     <span className="font-bold text-stone-850 dark:text-white">{selectedSub.date}</span>
                   </div>
                   <div>
-                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Total Guest Count</span>
+                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Total Guest Count</span>
                     <span className="font-bold text-stone-850 dark:text-white">{selectedSub.guests}</span>
                   </div>
                 </div>
@@ -497,7 +704,7 @@ export default function AdminPortal() {
               {selectedSub.type === 'donation' && (
                 <div className="grid grid-cols-1 gap-4 border-b dark:border-stone-850 pb-4">
                   <div>
-                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">Pledge Donation Amount</span>
+                    <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">Pledge Donation Amount</span>
                     <span className="font-extrabold text-sm text-purple-750 dark:text-purple-400">
                       Rs. {parseFloat(selectedSub.amount || '0').toLocaleString()}
                     </span>
@@ -507,17 +714,25 @@ export default function AdminPortal() {
 
               {/* Message Block */}
               <div className="space-y-1">
-                <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold">
+                <span className="block text-[9px] uppercase tracking-wider text-stone-400 font-bold font-mono">
                   {selectedSub.type === 'volunteer' ? 'How they can help / Message' : 'Submission Message / Notes'}
                 </span>
                 <p className="bg-stone-50 dark:bg-stone-950 p-4 rounded-xl border dark:border-stone-850 text-stone-800 dark:text-stone-250 leading-relaxed font-light whitespace-pre-wrap">
-                  {selectedSub.message || <span className="italic text-stone-400">No message provided.</span>}
+                  {selectedSub.message || <span className="italic text-stone-400 font-light">No message provided.</span>}
                 </p>
               </div>
             </div>
 
             {/* Modal Actions Footer */}
-            <div className="bg-stone-50 dark:bg-stone-950 border-t dark:border-stone-850 p-4 flex justify-end">
+            <div className="bg-stone-50 dark:bg-stone-950 border-t dark:border-stone-850 p-4 flex justify-between">
+              {/* Trigger Delete directly from details page */}
+              <button
+                onClick={() => setSubToDelete(selectedSub)}
+                className="bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/35 text-red-650 dark:text-red-400 font-semibold px-4 py-2 rounded-xl flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" /> Delete Record
+              </button>
+
               <button
                 onClick={() => setSelectedSub(null)}
                 className="bg-stone-900 hover:bg-stone-850 dark:bg-stone-800 dark:hover:bg-stone-750 text-white font-semibold px-4 py-2 rounded-xl"
@@ -526,6 +741,46 @@ export default function AdminPortal() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE MODAL */}
+      {subToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-stone-900/60 dark:bg-stone-950/80 backdrop-blur-sm transition-opacity" 
+            onClick={() => setSubToDelete(null)}
+          />
+          <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl w-full max-w-sm shadow-2xl p-6 overflow-hidden z-10 space-y-4 animate-scaleUp">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/50 flex items-center justify-center text-red-600 dark:text-red-400 flex-shrink-0">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-stone-900 dark:text-white text-base">Delete Submission?</h4>
+                <p className="text-stone-500 dark:text-stone-400 text-xs font-light leading-relaxed">
+                  Are you sure you want to delete **{subToDelete.name}**&apos;s submission? This action is permanent and cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end border-t dark:border-stone-850 pt-4">
+              <button
+                onClick={() => setSubToDelete(null)}
+                disabled={isDeleting}
+                className="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-750 text-stone-700 dark:text-stone-300 font-semibold px-4 py-2 rounded-xl text-xs transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteSubmission(subToDelete.id)}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition disabled:opacity-50"
+              >
+                {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+              </button>
+            </div>
           </div>
         </div>
       )}

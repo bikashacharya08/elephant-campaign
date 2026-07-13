@@ -14,3 +14,6 @@ Route::post('/volunteer', [VolunteerController::class, 'store']);
 
 Route::get('/admin/submissions', [AdminSubmissionsController::class, 'index'])
     ->middleware(CheckAdminToken::class);
+
+Route::delete('/admin/submissions/{id}', [AdminSubmissionsController::class, 'destroy'])
+    ->middleware(CheckAdminToken::class);
