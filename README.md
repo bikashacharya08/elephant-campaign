@@ -1,36 +1,48 @@
-# 🐘 Elephant Campaign Platform
+# The Chain Free Project 🐘
 
-A full-stack web application built to gather and manage volunteer applications for elephant conservation efforts. 
+Welcome to the **Chain Free Project**, a campaign dedicated to ethical elephant welfare. This platform serves as a landing page to raise awareness, collect volunteer applications, and drive fundraising for the liberation of working elephants in Sauraha, Nepal.
 
-This repository is a **Monorepo** containing both the client-side user interface and the server-side API.
+![The Chain Free Project Logo](elephant-campaign-frontend/public/elephant-1.jpg)
 
-## 💻 Tech Stack
+## 🌟 Features
+- **Stunning UI**: Premium glassmorphism design with a lush, dynamic jungle aesthetic.
+- **Volunteer Booking**: A fully validated form to apply for volunteer programs or book ethical experiences.
+- **Sanctuary Gallery**: A beautiful carousel showcasing rescued elephants in their natural habitats.
+- **WhatsApp Integration**: A floating chat widget for instant communication.
 
-**Frontend:**
-- Next.js (React Framework)
-- TypeScript
-- Tailwind CSS
+## 🏗️ Architecture (Monorepo)
+This repository is a monorepo containing two decoupled applications:
+1. **Frontend**: Next.js (React 19, Tailwind CSS v4).
+2. **Backend**: Laravel 13 (PHP 8.3 API).
 
-**Backend:**
-- Laravel 11 (PHP Framework)
-- MySQL Database
-- RESTful API Architecture
+## 🚀 Getting Started
 
-## ✨ Key Features
-- **Responsive UI:** Modern, accessible landing page designed for campaign awareness.
-- **Form Handling:** Asynchronous data submission using React state and fetch API.
-- **Database Integration:** Secure backend routing that catches payload data and inserts it directly into a relational database.
+### Option 1: Docker (Recommended)
+You can run the entire stack (Database, Backend, Frontend) with a single command using Docker.
+```bash
+docker-compose up -d --build
+```
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8000`
 
-## 🚀 How to Run Locally
+*Note: You may need to run `docker-compose exec backend php artisan key:generate` and `php artisan migrate --seed` on first run.*
 
-To run this project on your local machine, you will need Node.js, Composer, and XAMPP installed.
+### Option 2: Local Development
+If you prefer running the applications locally without Docker:
+1. **Backend**: Navigate to `elephant-campaign-backend`, configure your `.env`, and run `php artisan serve`.
+2. **Frontend**: Navigate to `elephant-campaign-frontend`, copy `.env.example` to `.env.local`, and run `npm run dev`.
 
-### 1. Database Setup (XAMPP)
-- Open XAMPP Control Panel and start **Apache** and **MySQL**.
-- Open phpMyAdmin (`http://localhost/phpmyadmin`).
-- Create a new database named `elephant_campaign_db`.
+## 🚢 Deployment
+The project is configured for seamless deployment on platforms like [Railway](https://railway.app). 
+- The backend utilizes `nixpacks.toml` to automatically install PHP 8.3 and run migrations.
+- The frontend Next.js app builds natively out of the box.
 
-### 2. Backend Engine (Laravel)
-Open a terminal and navigate to the backend directory:
+## 🛡️ Testing
+The Laravel backend is fully covered by automated Feature tests for the Volunteer API endpoint.
 ```bash
 cd elephant-campaign-backend
+php artisan test
+```
+
+## 🤝 Contributing
+Feel free to open issues or submit pull requests. All contributions to elephant welfare are appreciated!
