@@ -6,9 +6,10 @@ const nextConfig: any = {
     // Type checks are verified locally via tsc --noEmit; bypassing here saves memory on Railway build servers
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Linting checks are verified locally via npm run lint; bypassing here saves memory on Railway build servers
-    ignoreDuringBuilds: true,
+  experimental: {
+    // Limit CPU threads and disable worker threads to prevent OOM (VirtualAlloc failed) on restricted systems
+    cpus: 1,
+    workerThreads: false,
   },
 };
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   Lock, 
   Unlock, 
@@ -316,12 +317,12 @@ export default function AdminPortal() {
       {/* Top Navbar */}
       <header className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-850 h-16 sticky top-0 z-30 transition-colors">
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-450 text-lg">
+          <Link href="/" className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-450 text-lg hover:scale-[1.01] transition-transform duration-250">
             <span>🐘</span> <span>The Chain Free Project</span>
             <span className="hidden sm:inline bg-stone-100 dark:bg-stone-850 text-stone-500 dark:text-stone-400 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase border dark:border-stone-800 ml-2">
               Admin Portal
             </span>
-          </div>
+          </Link>
 
           <button 
             onClick={handleLogout}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { 
   Users, 
   Sparkles, 
@@ -75,9 +76,9 @@ export default function ElephantCampaignLanding() {
       {/* HEADER / NAVIGATION */}
       <header className="sticky top-0 z-40 bg-white/70 dark:bg-stone-900/70 backdrop-blur-md border-b border-stone-200/60 dark:border-stone-800/40 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-450 text-sm tracking-widest uppercase hover:scale-[1.01] transition-transform duration-250">
+          <Link href="/" className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-450 text-sm tracking-widest uppercase hover:scale-[1.01] transition-transform duration-250">
             <span>🐘</span> <span>The Chain Free Project</span>
-          </div>
+          </Link>
           <nav className="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
             <a href="#about" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Mission & Goals</a>
             <a href="#herd" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Rescue Campaign</a>
