@@ -8,6 +8,7 @@ export default function VolunteerForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    contact_handle: '',
     type: 'volunteer',
     date: '',
     guests: '',
@@ -68,6 +69,7 @@ export default function VolunteerForm() {
         setFormData({
           name: '',
           email: '',
+          contact_handle: '',
           type: formType,
           date: '',
           guests: '',
@@ -193,6 +195,20 @@ export default function VolunteerForm() {
             />
             {formErrors.email && (
               <p className="mt-1 text-xs text-red-600 dark:text-red-400">{formErrors.email[0]}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-1">WhatsApp or Social Media (Optional)</label>
+            <input 
+              type="text" 
+              name="contact_handle"
+              value={formData.contact_handle}
+              onChange={handleInputChange}
+              placeholder="e.g. +977 980... or @yourhandle" 
+              className={`w-full px-3.5 py-2.5 bg-white dark:bg-stone-950 text-stone-900 dark:text-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 dark:focus:ring-emerald-500/20 focus:border-emerald-700 dark:focus:border-emerald-500 transition ${formErrors.contact_handle ? 'border-red-400 dark:border-red-550 bg-red-50/50 dark:bg-red-950/20' : 'border-stone-300 dark:border-stone-700'}`}
+            />
+            {formErrors.contact_handle && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{formErrors.contact_handle[0]}</p>
             )}
           </div>
 
