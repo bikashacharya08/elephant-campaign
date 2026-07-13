@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: elephant_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: elephant_campaign_db
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - elephant_net
+
+  # PHP-FPM Backend Service
+  backend:
+    build:
+      context: ./elephant-campaign-backend
+      dockerfile: Dockerfile
+    container_name: elephant_backend
+    restart: unless-stopped
+    volumes:
+      - ./elephant-campaign-backend:/var/www/html
+    networks:
+      - elephant_net
+    depends_on:
+      - db
+
+  # Nginx Web Server Service
+  web:
+    image: nginx:alpine
+    container_name: elephant_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./elephant-campaign-backend:/var/www/html
+      - ./elephant-campaign-backend/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - elephant_net
+    depends_on:
+      - backend
+
+  # Next.js Frontend Service
+  frontend:
+    build:
+      context: ./elephant-campaign-frontend
+      dockerfile: Dockerfile
+    container_name: elephant_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./elephant-campaign-frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+    networks:
+      - elephant_net
+
+networks:
+  elephant_net:
+    driver: bridge
+
+volumes:
+  db_data:

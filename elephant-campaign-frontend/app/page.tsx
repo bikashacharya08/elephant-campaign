@@ -1,65 +1,27 @@
-'use client';
-
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Heart, Users, MessageCircle, Share2, ShieldAlert, CheckCircle } from 'lucide-react';
+import React from 'react';
+import Image from 'next/image';
+import { Heart, Users, Share2, ShieldAlert } from 'lucide-react';
+import VolunteerForm from '@/components/VolunteerForm';
+import WhatsAppWidget from '@/components/WhatsAppWidget';
 
 export default function ElephantCampaignLanding() {
-  // JavaScript State: Short-term memory to handle form inputs
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [formSubmitted, setFormSubmitted] = useState(false);
-
-  // JavaScript Handler: Manages changes inside the form fields
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  // JavaScript Handler: Triggered when user clicks "Submit Application"
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-
-  try {
-    // Send the form data to our fresh XAMPP Laravel API endpoint
-    const response = await fetch('http://127.0.0.1:8000/api/volunteer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      // If the backend says "201 Created", flip the success screen and clear form!
-      setFormSubmitted(true);
-      setFormData({ name: '', email: '', message: '' });
-    } else {
-      const errorData = await response.json();
-      alert('Oops! Something went wrong: ' + (errorData.message || 'Server error'));
-    }
-  } catch (error) {
-    console.error('API Error:', error);
-    alert('Could not connect to the backend server. Make sure php artisan serve is running!');
-  }
-};
-
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-emerald-200">
       
       {/* HEADER / NAVIGATION */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-emerald-800 text-lg tracking-tight">
-            <span>🐘 The Chain Free Project</span>
+          <div className="flex items-center gap-2 font-bold text-emerald-800 text-lg tracking-tight hover:scale-[1.01] transition-transform duration-200">
+            <span className="text-xl">🐘</span> <span>The Chain Free Project</span>
           </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-stone-600">
-            <a href="#about" className="hover:text-emerald-700 transition">Our Mission</a>
-            <a href="#gallery" className="hover:text-emerald-700 transition">Media</a>
-            <a href="#volunteer" className="hover:text-emerald-700 transition">Volunteer</a>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-stone-600">
+            <a href="#about" className="hover:text-emerald-700 transition-colors duration-200">Our Mission</a>
+            <a href="#gallery" className="hover:text-emerald-700 transition-colors duration-200">Media Hub</a>
+            <a href="#volunteer" className="hover:text-emerald-700 transition-colors duration-200">Volunteer</a>
           </nav>
           <a 
             href="#donate" 
-            className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold transition shadow-sm"
+            className="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.98]"
           >
             Donate Now
           </a>
@@ -67,31 +29,33 @@ export default function ElephantCampaignLanding() {
       </header>
 
       {/* HERO SECTION */}
-      <section className="relative bg-stone-900 text-white py-24 md:py-32 px-4 overflow-hidden">
-        {/* Subtle background overlay pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(#2c3e2e_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
+      <section className="relative bg-gradient-to-br from-stone-950 via-stone-900 to-emerald-950 text-white py-28 md:py-36 px-4 overflow-hidden">
+        {/* Floating gradient blur orbs for premium visual depth */}
+        <div className="absolute top-12 left-1/4 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl animate-pulse duration-10000"></div>
+        <div className="absolute bottom-8 right-1/4 w-96 h-96 rounded-full bg-emerald-700/5 blur-3xl animate-pulse duration-7000"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#1f2e22_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
         
-        <div className="relative max-w-4xl mx-auto text-center space-y-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <ShieldAlert className="w-3.5 h-3.5" /> Stop Elephant Riding
+        <div className="relative max-w-4xl mx-auto text-center space-y-8 animate-fadeInUp">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+            <ShieldAlert className="w-3.5 h-3.5 animate-pulse" /> Stop Elephant Riding
           </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-            Born to Rule the Wild forests, <br />
-            <span className="text-emerald-400">Not to Spend Life in Chains.</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.15]">
+            Born to Rule the Wild Forests, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Not to Spend Life in Chains.</span>
           </h1>
-          <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto font-light">
-            Elephants belong in nature, not chains. Help us secure funding, organize community action, and transition working elephants into peaceful, ethical sanctuaries.
+          <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto font-light leading-relaxed">
+            Elephants belong in nature, not chains. Help us secure critical funding, organize community-driven action, and transition working elephants into peaceful, ethical sanctuaries.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <a 
               href="#donate" 
-              className="bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold px-8 py-3.5 rounded-lg transition shadow-lg text-center"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-stone-950 font-bold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.03] active:scale-[0.98] text-center text-sm"
             >
               Support the Fundraiser
             </a>
             <a 
               href="#volunteer" 
-              className="bg-transparent hover:bg-white/10 text-white font-semibold border border-stone-500 px-8 py-3.5 rounded-lg transition text-center"
+              className="bg-transparent hover:bg-white/5 text-white font-semibold border border-stone-600 hover:border-stone-400 px-8 py-4 rounded-lg transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] text-center text-sm"
             >
               Become a Volunteer
             </a>
@@ -100,9 +64,14 @@ export default function ElephantCampaignLanding() {
       </section>
 
       {/* MISSION & ABOUT SECTION */}
-      <section id="about" className="py-20 max-w-6xl mx-auto px-4">
+      <section id="about" className="py-24 max-w-6xl mx-auto px-4">
+        <div className="text-center space-y-2 mb-16">
+          <h2 className="text-3xl font-bold text-stone-900 tracking-tight">Our Core Mission</h2>
+          <div className="h-1 w-12 bg-emerald-600 mx-auto rounded"></div>
+        </div>
+        
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm space-y-4">
+          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-4 animate-fadeInUp">
             <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
               <Heart className="w-6 h-6" />
             </div>
@@ -112,7 +81,7 @@ export default function ElephantCampaignLanding() {
             </p>
           </div>
 
-          <div id="donate" className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm space-y-4 ring-2 ring-emerald-600/20">
+          <div id="donate" className="bg-white p-8 rounded-2xl border border-emerald-500/20 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 space-y-4 ring-2 ring-emerald-600/10 animate-fadeInUp [animation-delay:200ms]">
             <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
               <Share2 className="w-6 h-6" />
             </div>
@@ -123,13 +92,14 @@ export default function ElephantCampaignLanding() {
             <a 
               href="https://your-fundraiser-link.com" 
               target="_blank" 
-              className="inline-block w-full text-center text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-900 py-2.5 rounded-lg transition"
+              rel="noopener noreferrer"
+              className="inline-block w-full text-center text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-900 py-3 rounded-lg transition-colors duration-200 shadow-sm"
             >
               Go to Donation Link →
             </a>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm space-y-4">
+          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-4 animate-fadeInUp [animation-delay:400ms]">
             <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
               <Users className="w-6 h-6" />
             </div>
@@ -142,148 +112,140 @@ export default function ElephantCampaignLanding() {
       </section>
 
       {/* MEDIA / GALLERY SECTION */}
-      <section id="gallery" className="py-16 bg-stone-100 border-y border-stone-200 px-4">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <section id="gallery" className="py-24 bg-stone-100 border-y border-stone-200 px-4">
+        <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-stone-900 tracking-tight">Campaign Media Hub</h2>
-            <p className="text-stone-600 max-w-md mx-auto text-sm">Visual truth and awareness directly from our monitoring efforts.</p>
+            <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-sans">Campaign Media Hub</h2>
+            <div className="h-1 w-12 bg-emerald-600 mx-auto rounded"></div>
+            <p className="text-stone-600 max-w-md mx-auto text-sm pt-2">Visual truth and awareness directly from our monitoring efforts.</p>
           </div>
           
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-            <img 
-              src="/elephant-1.jpg" 
-              alt="Rescued elephant in sanctuary" 
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-            />
+            
+            {/* Gallery Image 1 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-1.jpg" 
+                alt="Rescued elephant in sanctuary" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Sanctuary Life</p>
+                  <p className="text-sm font-semibold mt-0.5">Peaceful morning bath in the ethical river sanctuary.</p>
+                </div>
+              </div>
             </div>
-            <div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-            <img 
-              src="/elephant-2.jpg" 
-              alt="Rescued elephant in sanctuary" 
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-            />
+
+            {/* Gallery Image 2 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-2.jpg" 
+                alt="Rescued elephant in sanctuary" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Wild Roaming</p>
+                  <p className="text-sm font-semibold mt-0.5">Roaming freely in the protected dense bamboo forests.</p>
+                </div>
+              </div>
             </div>
-            <div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-            <img 
-              src="/elephant-3.jpg" 
-              alt="Rescued elephant in sanctuary" 
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-            />
+
+            {/* Gallery Image 3 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-3.jpg" 
+                alt="Rescued elephant in sanctuary" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Safe Herd</p>
+                  <p className="text-sm font-semibold mt-0.5">A social herd bonding in safe, chain-free environments.</p>
+                </div>
+              </div>
             </div>
-            <div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-  <img 
-    src="/elephant-4.jpg" 
-    alt="Closer shot of elephant trunk" 
-    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-  />
-</div>
-<div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-  <img 
-    src="/elephant-5.jpg" 
-    alt="Closer shot of elephant trunk" 
-    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-  />
-</div>
-<div className="aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm">
-  <img 
-    src="/elephant-6.jpg" 
-    alt="Closer shot of elephant trunk" 
-    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-  />
-</div>
+
+            {/* Gallery Image 4 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-4.jpg" 
+                alt="Closer shot of elephant trunk" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Connection</p>
+                  <p className="text-sm font-semibold mt-0.5">Close-up connection showing the gentle, majestic giant.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Image 5 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-5.jpg" 
+                alt="Closer shot of elephant trunk" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Playtime</p>
+                  <p className="text-sm font-semibold mt-0.5">Natural foraging and playtime in lush tropical grasslands.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gallery Image 6 */}
+            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
+              <Image 
+                src="/elephant-6.jpg" 
+                alt="Closer shot of elephant trunk" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Reunion</p>
+                  <p className="text-sm font-semibold mt-0.5">Reunited elephant families living in complete freedom.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* VOLUNTEER CAPTURE FORM */}
-      <section id="volunteer" className="py-20 max-w-xl mx-auto px-4">
-        <div className="bg-white border border-stone-200 p-8 rounded-2xl shadow-sm space-y-6">
-          <div className="text-center space-y-1">
-            <h2 className="text-2xl font-bold text-stone-900">Join as a Volunteer</h2>
-            <p className="text-stone-500 text-sm">Fill your details below to become part of the active campaign team.</p>
-          </div>
-
-          {formSubmitted ? (
-            <div className="bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-sm">Application Received!</p>
-                <p className="text-xs text-emerald-700 mt-0.5">Thank you for joining the campaign. We will be in touch soon!</p>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">Full Name</label>
-                <input 
-                  type="text" 
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Your Name" 
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">Email Address</label>
-                <input 
-                  type="email" 
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="name@example.com" 
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">How can you help?</label>
-                <textarea 
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={3}
-                  placeholder="Tell us why you'd like to help free elephants..." 
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition"
-                ></textarea>
-              </div>
-              <button 
-                type="submit" 
-                className="w-full bg-stone-900 hover:bg-stone-850 text-white font-semibold py-2.5 rounded-lg text-sm transition"
-              >
-                Submit Application
-              </button>
-            </form>
-          )}
-        </div>
+      <section id="volunteer" className="py-24 max-w-xl mx-auto px-4">
+        <VolunteerForm />
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-stone-900 text-stone-400 py-12 px-4 border-t border-stone-800 text-sm">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 The Chain Free Project.</p>
-          <div className="flex gap-6">
-            <a href="#about" className="hover:text-white transition">About</a>
-            <a href="#volunteer" className="hover:text-white transition">Volunteer</a>
+      <footer className="bg-stone-900 text-stone-400 py-16 px-4 border-t border-stone-800 text-sm">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <p>© 2026 The Chain Free Project. Dedicated to ethical elephant conservation.</p>
+          <div className="flex gap-8">
+            <a href="#about" className="hover:text-white transition-colors duration-200">About Our Work</a>
+            <a href="#volunteer" className="hover:text-white transition-colors duration-200">Volunteer Registration</a>
           </div>
         </div>
       </footer>
 
       {/* FLOATING WHATSAPP CHAT WIDGET */}
-      <a 
-        href="https://wa.me/9779865345753?text=Hi!%20I%20want%20to%20know%20more%20about%20The%20Chain%20Free%20Project." 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-105 group"
-        title="Chat on WhatsApp"
-      >
-        <MessageCircle className="w-6 h-6 fill-white" />
-        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-out whitespace-nowrap text-xs font-bold pl-0 group-hover:pl-2">
-          Chat With Us (Whatsapp)
-        </span>
-      </a>
+      <WhatsAppWidget />
 
     </div>
   );
