@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Chain Free Project | Ethical Elephant Sanctuary",
-  description: "Join our mission to end tourist elephant riding and provide a free, chain-free life for elephants in Sauraha, Chitwan.",
-  keywords: ["elephant sanctuary", "chain free project", "ethical tourism", "sauraha chitwan", "volunteer nepal"],
+  title: "The Chain Free Project | Ethical Elephant Conservation",
+  description: "Join our campaign to end elephant riding and build a chain-free sanctuary for working elephants in Nepal. Advocate for ethical wildlife tourism.",
+  keywords: "elephant sanctuary, nepal, ethical tourism, chain free, wildlife conservation, volunteer",
 };
 
 

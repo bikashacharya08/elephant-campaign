@@ -51,3 +51,22 @@ html {
 .animation-delay-400 {
   animation-delay: 400ms;
 }
+
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f6f1;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #050f08;
+}
+::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #059669;
+}
