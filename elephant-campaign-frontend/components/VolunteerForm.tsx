@@ -101,7 +101,7 @@ export default function VolunteerForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+    <div className="bg-white/80 dark:bg-[#0b1c12]/80 backdrop-blur-xl border border-[#34d399]/20 p-6 sm:p-10 rounded-[2rem] shadow-[0_20px_50px_rgb(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgb(16,185,129,0.05)] hover:shadow-[0_30px_60px_rgb(16,185,129,0.1)] transition-all duration-500 space-y-8">
       
       {/* FORM TAB SELECTORS */}
       <div className="flex border-b border-stone-150 dark:border-stone-800">
@@ -129,11 +129,11 @@ export default function VolunteerForm() {
         </button>
       </div>
 
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-stone-900 dark:text-white">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-light tracking-tight text-[#064e3b] dark:text-white">
           {formType === 'volunteer' ? 'Join the Movement' : 'Schedule an Ethical Visit'}
         </h2>
-        <p className="text-stone-500 dark:text-stone-400 text-sm font-light">
+        <p className="text-[#4b6b58] dark:text-[#8cb89f] text-sm font-light">
           {formType === 'volunteer' 
             ? 'Fill in your details below to become a vital part of our elephant conservation team.'
             : 'Book a sensitive, hands-off ethical visit with our elephants in Sauraha.'}
@@ -248,7 +248,7 @@ export default function VolunteerForm() {
               onChange={handleInputChange}
               rows={3}
               placeholder={formType === 'volunteer' ? "Tell us why you want to support chain-free elephant welfare..." : "Specify any requests, preferences, or details here..."}
-              className={`w-full px-3.5 py-2.5 bg-white dark:bg-stone-950 text-stone-900 dark:text-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 dark:focus:ring-emerald-500/20 focus:border-emerald-700 dark:focus:border-emerald-500 transition ${formErrors.message ? 'border-red-400 dark:border-red-550 bg-red-50/50 dark:bg-red-950/20' : 'border-stone-300 dark:border-stone-700'}`}
+              className={`w-full px-4 py-3 bg-[#f1f6f1]/50 dark:bg-[#050f08]/50 text-[#064e3b] dark:text-white border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]/30 dark:focus:ring-[#10b981]/20 focus:border-[#10b981] transition-all ${formErrors.message ? 'border-red-400 bg-red-50/50' : 'border-[#34d399]/30 hover:border-[#10b981]/50'}`}
             ></textarea>
             {formErrors.message && (
               <p className="mt-1 text-xs text-red-600 dark:text-red-400">{formErrors.message[0]}</p>
@@ -257,7 +257,7 @@ export default function VolunteerForm() {
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-stone-900 dark:bg-stone-850 hover:bg-stone-800 dark:hover:bg-stone-800 text-white font-semibold py-3.5 rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md active:scale-[0.98]"
+            className="w-full bg-[#10b981] hover:bg-[#059669] text-white font-bold py-4 rounded-xl text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_8px_20px_rgb(16,185,129,0.25)] hover:shadow-[0_12px_25px_rgb(16,185,129,0.4)] hover:-translate-y-1 active:scale-[0.98]"
           >
             {isSubmitting 
               ? 'Submitting...' 
