@@ -10,13 +10,14 @@ class VolunteerTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Valid data creates a volunteer and returns 201.
+     * Valid volunteer data creates a volunteer and returns 201.
      */
     public function test_volunteer_signup_with_valid_data(): void
     {
         $response = $this->postJson('/api/volunteer', [
             'name'    => 'Jane Doe',
             'email'   => 'jane@example.com',
+            'type'    => 'volunteer',
             'message' => 'I want to help free elephants!',
         ]);
 
@@ -26,7 +27,68 @@ class VolunteerTest extends TestCase
         $this->assertDatabaseHas('volunteers', [
             'name'  => 'Jane Doe',
             'email' => 'jane@example.com',
+            'type'  => 'volunteer',
         ]);
+    }
+
+    /**
+     * Valid booking data creates a volunteer entry and returns 201.
+     */
+    public function test_booking_signup_with_valid_data(): void
+    {
+        $tomorrow = now()->addDay()->format('Y-m-d');
+        
+        $response = $this->postJson('/api/volunteer', [
+            'name'    => 'John Traveler',
+            'email'   => 'john@traveler.com',
+            'type'    => 'booking',
+            'date'    => $tomorrow,
+            'guests'  => 4,
+            'message' => 'We would love to do the river walk experience!',
+        ]);
+
+        $response->assertStatus(201)
+                 ->assertJson(['message' => 'Volunteer securely saved!']);
+
+        $this->assertDatabaseHas('volunteers', [
+            'name'    => 'John Traveler',
+            'email'   => 'john@traveler.com',
+            'type'    => 'booking',
+            'date'    => $tomorrow,
+            'guests'  => 4,
+        ]);
+    }
+
+    /**
+     * Booking fails when date or guest count is missing.
+     */
+    public function test_booking_fails_without_date_or_guests(): void
+    {
+        $response = $this->postJson('/api/volunteer', [
+            'name'    => 'John Traveler',
+            'email'   => 'john@traveler.com',
+            'type'    => 'booking',
+            'message' => 'I want to book!',
+        ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['date', 'guests']);
+    }
+
+    /**
+     * Signup fails with an invalid type parameter.
+     */
+    public function test_signup_fails_with_invalid_type(): void
+    {
+        $response = $this->postJson('/api/volunteer', [
+            'name'    => 'Jane Doe',
+            'email'   => 'jane@example.com',
+            'type'    => 'invalid-type',
+            'message' => 'I want to help!',
+        ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['type']);
     }
 
     /**
@@ -36,6 +98,7 @@ class VolunteerTest extends TestCase
     {
         $response = $this->postJson('/api/volunteer', [
             'email'   => 'jane@example.com',
+            'type'    => 'volunteer',
             'message' => 'I want to help!',
         ]);
 
@@ -50,6 +113,7 @@ class VolunteerTest extends TestCase
     {
         $response = $this->postJson('/api/volunteer', [
             'name'    => 'Jane Doe',
+            'type'    => 'volunteer',
             'message' => 'I want to help!',
         ]);
 
@@ -65,6 +129,7 @@ class VolunteerTest extends TestCase
         $response = $this->postJson('/api/volunteer', [
             'name'    => 'Jane Doe',
             'email'   => 'not-an-email',
+            'type'    => 'volunteer',
             'message' => 'I want to help!',
         ]);
 
@@ -80,6 +145,7 @@ class VolunteerTest extends TestCase
         $response = $this->postJson('/api/volunteer', [
             'name'  => 'Jane Doe',
             'email' => 'jane@example.com',
+            'type'  => 'volunteer',
         ]);
 
         $response->assertStatus(422)
@@ -94,7 +160,7 @@ class VolunteerTest extends TestCase
         $response = $this->postJson('/api/volunteer', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'email', 'message']);
+                 ->assertJsonValidationErrors(['name', 'email', 'type', 'message']);
     }
 
     /**
@@ -105,6 +171,7 @@ class VolunteerTest extends TestCase
         $response = $this->postJson('/api/volunteer', [
             'name'    => str_repeat('A', 256),
             'email'   => 'jane@example.com',
+            'type'    => 'volunteer',
             'message' => 'I want to help!',
         ]);
 

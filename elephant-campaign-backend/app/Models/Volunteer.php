@@ -14,6 +14,9 @@ class Volunteer extends Model
     protected $fillable = [
         'name',
         'email',
+        'type',
+        'date',
+        'guests',
         'message',
     ];
 }

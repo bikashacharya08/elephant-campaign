@@ -1,13 +1,32 @@
 'use client';
 
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Calendar, Users } from 'lucide-react';
 
 export default function VolunteerForm() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formType, setFormType] = useState<'volunteer' | 'booking'>('volunteer');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    type: 'volunteer',
+    date: '',
+    guests: '',
+    message: ''
+  });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleTypeChange = (type: 'volunteer' | 'booking') => {
+    setFormType(type);
+    setFormData({
+      ...formData,
+      type: type,
+      date: '',
+      guests: ''
+    });
+    setFormErrors({});
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -19,6 +38,15 @@ export default function VolunteerForm() {
     setFormErrors({});
     setIsSubmitting(true);
 
+    // Prepare payload
+    const payload = {
+      ...formData,
+      // Convert guests to integer if present
+      guests: formData.guests ? parseInt(formData.guests, 10) : null,
+      // If type is volunteer, clear out date
+      date: formData.type === 'booking' ? formData.date : null,
+    };
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/volunteer`, {
         method: 'POST',
@@ -26,12 +54,19 @@ export default function VolunteerForm() {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         setFormSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({
+          name: '',
+          email: '',
+          type: formType,
+          date: '',
+          guests: '',
+          message: ''
+        });
       } else {
         const errorData = await response.json();
         if (response.status === 422 && errorData.errors) {
@@ -42,17 +77,57 @@ export default function VolunteerForm() {
       }
     } catch (error) {
       console.error('API Error:', error);
-      alert('Could not connect to the backend server. Make sure the API server is running!');
+      alert('Could not connect to the server. Make sure the API server is running!');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Get tomorrow's date string for min date in date picker
+  const getTomorrowString = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
   return (
-    <div className="bg-white border border-stone-200 p-8 rounded-2xl shadow-sm space-y-6">
+    <div className="bg-white border border-stone-200/80 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+      
+      {/* FORM TAB SELECTORS */}
+      <div className="flex border-b border-stone-150">
+        <button
+          type="button"
+          onClick={() => handleTypeChange('volunteer')}
+          className={`flex-1 text-center pb-3.5 text-xs font-bold uppercase tracking-wider transition-colors duration-200 border-b-2 ${
+            formType === 'volunteer'
+              ? 'border-emerald-600 text-emerald-800'
+              : 'border-transparent text-stone-400 hover:text-stone-600'
+          }`}
+        >
+          Volunteer Sign-Up
+        </button>
+        <button
+          type="button"
+          onClick={() => handleTypeChange('booking')}
+          className={`flex-1 text-center pb-3.5 text-xs font-bold uppercase tracking-wider transition-colors duration-200 border-b-2 ${
+            formType === 'booking'
+              ? 'border-emerald-600 text-emerald-800'
+              : 'border-transparent text-stone-400 hover:text-stone-600'
+          }`}
+        >
+          Book Experience
+        </button>
+      </div>
+
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-stone-900">Join as a Volunteer</h2>
-        <p className="text-stone-500 text-sm">Fill your details below to become part of the active campaign team.</p>
+        <h2 className="text-2xl font-bold text-stone-900">
+          {formType === 'volunteer' ? 'Join as a Volunteer' : 'Schedule a Visit'}
+        </h2>
+        <p className="text-stone-500 text-sm">
+          {formType === 'volunteer' 
+            ? 'Fill in your details below to become part of the active campaign team.'
+            : 'Book an ethical, ride-free tour to interact with rescued elephants in Sauraha.'}
+        </p>
       </div>
 
       {formSubmitted ? (
@@ -61,9 +136,22 @@ export default function VolunteerForm() {
             <CheckCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="font-bold text-lg">Application Received!</p>
-            <p className="text-sm text-emerald-800/85 mt-1 max-w-sm">Thank you for joining the campaign. We will review your application and be in touch soon!</p>
+            <p className="font-bold text-lg">
+              {formType === 'volunteer' ? 'Application Received!' : 'Booking Request Received!'}
+            </p>
+            <p className="text-sm text-emerald-800/85 mt-1 max-w-sm">
+              {formType === 'volunteer'
+                ? 'Thank you for joining the campaign. We will review your application and be in touch soon!'
+                : 'Thank you for booking! We have received your request and will contact you via email to confirm availability.'}
+            </p>
           </div>
+          <button
+            type="button"
+            onClick={() => setFormSubmitted(false)}
+            className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 underline mt-2"
+          >
+            Submit another request
+          </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,7 +164,7 @@ export default function VolunteerForm() {
               onChange={handleInputChange}
               required
               placeholder="Your Name" 
-              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.name ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.name ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
             />
             {formErrors.name && (
               <p className="mt-1 text-xs text-red-600">{formErrors.name[0]}</p>
@@ -91,21 +179,66 @@ export default function VolunteerForm() {
               onChange={handleInputChange}
               required
               placeholder="name@example.com" 
-              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.email ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.email ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
             />
             {formErrors.email && (
               <p className="mt-1 text-xs text-red-600">{formErrors.email[0]}</p>
             )}
           </div>
+
+          {/* DYNAMIC BOOKING FIELDS */}
+          {formType === 'booking' && (
+            <div className="grid grid-cols-2 gap-4 animate-fadeInUp">
+              <div>
+                <label className="flex items-center gap-1 block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">
+                  <Calendar className="w-3.5 h-3.5 text-stone-400" /> Target Date
+                </label>
+                <input 
+                  type="date" 
+                  name="date"
+                  min={getTomorrowString()}
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  required={formType === 'booking'}
+                  className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.date ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
+                />
+                {formErrors.date && (
+                  <p className="mt-1 text-xs text-red-600">{formErrors.date[0]}</p>
+                )}
+              </div>
+              <div>
+                <label className="flex items-center gap-1 block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">
+                  <Users className="w-3.5 h-3.5 text-stone-400" /> Guest Count
+                </label>
+                <input 
+                  type="number" 
+                  name="guests"
+                  min="1"
+                  max="50"
+                  value={formData.guests}
+                  onChange={handleInputChange}
+                  required={formType === 'booking'}
+                  placeholder="2" 
+                  className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.guests ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
+                />
+                {formErrors.guests && (
+                  <p className="mt-1 text-xs text-red-600">{formErrors.guests[0]}</p>
+                )}
+              </div>
+            </div>
+          )}
+
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">How can you help?</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">
+              {formType === 'volunteer' ? 'How can you help?' : 'Special Notes / Message'}
+            </label>
             <textarea 
               name="message"
               value={formData.message}
               onChange={handleInputChange}
               rows={3}
-              placeholder="Tell us why you'd like to help free elephants..." 
-              className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.message ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
+              placeholder={formType === 'volunteer' ? "Tell us why you'd like to help free elephants..." : "Tell us about any specific preferences, dietary needs, or times..."}
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 transition ${formErrors.message ? 'border-red-400 bg-red-50/50' : 'border-stone-300'}`}
             ></textarea>
             {formErrors.message && (
               <p className="mt-1 text-xs text-red-600">{formErrors.message[0]}</p>
@@ -114,9 +247,13 @@ export default function VolunteerForm() {
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-stone-900 hover:bg-stone-800 text-white font-semibold py-2.5 rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md active:scale-[0.98]"
+            className="w-full bg-stone-900 hover:bg-stone-800 text-white font-semibold py-3.5 rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md active:scale-[0.98]"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Application'}
+            {isSubmitting 
+              ? 'Submitting...' 
+              : formType === 'volunteer' 
+                ? 'Submit Application' 
+                : 'Send Booking Inquiry'}
           </button>
         </form>
       )}

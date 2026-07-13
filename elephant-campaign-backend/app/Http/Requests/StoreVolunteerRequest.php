@@ -23,6 +23,9 @@ class StoreVolunteerRequest extends FormRequest
         return [
             'name'    => ['required', 'string', 'max:255'],
             'email'   => ['required', 'email', 'max:255'],
+            'type'    => ['required', 'string', 'in:volunteer,booking'],
+            'date'    => ['required_if:type,booking', 'nullable', 'date', 'after_or_equal:today'],
+            'guests'  => ['required_if:type,booking', 'nullable', 'integer', 'min:1', 'max:50'],
             'message' => ['required', 'string', 'max:5000'],
         ];
     }
