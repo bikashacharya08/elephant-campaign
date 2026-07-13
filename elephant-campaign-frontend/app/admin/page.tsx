@@ -43,8 +43,15 @@ export default function AdminPortal() {
   const validateAndFetch = async (tokenToCheck: string) => {
     setIsLoading(true);
     setAuthError('');
+    
+    const baseApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const isMissingEnv = !baseApiUrl || baseApiUrl === 'undefined' || baseApiUrl.trim() === '';
+    const apiUrl = isMissingEnv ? 'http://localhost:8000/api' : baseApiUrl;
+
+    console.log('[Admin Dashboard API Request] Fetching from URL:', `${apiUrl}/admin/submissions`);
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/submissions`, {
+      const response = await fetch(`${apiUrl}/admin/submissions`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -60,14 +67,21 @@ export default function AdminPortal() {
       } else {
         sessionStorage.removeItem('adminToken');
         setIsAuthenticated(false);
-        setAuthError(response.status === 401 
+        let errorMsg = response.status === 401 
           ? 'Invalid Admin Token. Access Denied.' 
-          : 'Server connection error.'
-        );
+          : 'Server connection error.';
+        if (isMissingEnv) {
+          errorMsg += ' (Note: NEXT_PUBLIC_API_URL is not configured in your deployment environment).';
+        }
+        setAuthError(errorMsg);
       }
     } catch (error) {
       console.error('Admin Auth Error:', error);
-      setAuthError('Unable to connect to the backend server.');
+      let errorMsg = 'Unable to connect to the backend server.';
+      if (isMissingEnv) {
+        errorMsg += ' (Note: NEXT_PUBLIC_API_URL environment variable is missing/undefined. Please configure it in your Railway dashboard to point to your backend API, e.g. https://your-backend.up.railway.app/api).';
+      }
+      setAuthError(errorMsg);
     } finally {
       setIsLoading(false);
     }

@@ -65,8 +65,14 @@ export default function DonateModal({ isOpen, onClose, elephantName }: DonateMod
       message: formData.message || `Fundraising contribution for ${elephantName}`
     };
 
+    const baseApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const isMissingEnv = !baseApiUrl || baseApiUrl === 'undefined' || baseApiUrl.trim() === '';
+    const apiUrl = isMissingEnv ? 'http://localhost:8000/api' : baseApiUrl;
+
+    console.log('[Donation Form API Request] Posting to URL:', `${apiUrl}/volunteer`);
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/volunteer`, {
+      const response = await fetch(`${apiUrl}/volunteer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +93,11 @@ export default function DonateModal({ isOpen, onClose, elephantName }: DonateMod
       }
     } catch (error) {
       console.error('Donation Submission Error:', error);
-      alert('Could not connect to the server. Please verify the backend is running!');
+      let errorMsg = 'Could not connect to the server. Please verify the backend is running!';
+      if (isMissingEnv) {
+        errorMsg += '\n\n(Debugging Note: The NEXT_PUBLIC_API_URL environment variable is not defined. Please configure it in your Railway dashboard to point to your backend API, e.g. https://your-backend.up.railway.app/api)';
+      }
+      alert(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
