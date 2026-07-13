@@ -252,47 +252,71 @@ export default function ElephantCampaignLanding() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Exp 1 */}
-          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
-              <Footprints className="w-5 h-5" />
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+                <Footprints className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Forest Walks</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+                Walk alongside elephants through natural pathways. Observe foraging habits up close from a safe distance.
+              </p>
             </div>
-            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Forest Walks</h3>
-            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
-              Walk alongside elephants through natural pathways. Observe foraging habits up close from a safe distance.
-            </p>
+            <div className="pt-3 border-t border-stone-100 dark:border-stone-850 flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+              <span>Duration: 2 hrs</span>
+              <span className="text-emerald-750 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-900/30">Price: TBD</span>
+            </div>
           </div>
 
           {/* Exp 2 */}
-          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
-              <Compass className="w-5 h-5" />
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+                <Compass className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Feed Preparation</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+                Craft supplementary food bundles using grass, salt, and molasses, and feed them with care.
+              </p>
             </div>
-            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Feed Preparation</h3>
-            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
-              Craft supplementary food bundles using grass, salt, and molasses, and feed them with care.
-            </p>
+            <div className="pt-3 border-t border-stone-100 dark:border-stone-850 flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+              <span>Duration: 1.5 hrs</span>
+              <span className="text-emerald-750 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-900/30">Price: TBD</span>
+            </div>
           </div>
 
           {/* Exp 3 */}
-          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
-              <Eye className="w-5 h-5" />
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+                <Eye className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Bathing Observation</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+                Observe elephants splash and bathe in the Rapti River. A natural highlight for photography.
+              </p>
             </div>
-            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Bathing Observation</h3>
-            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
-              Observe elephants splash and bathe in the Rapti River. A natural highlight for photography.
-            </p>
+            <div className="pt-3 border-t border-stone-100 dark:border-stone-850 flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+              <span>Duration: 1 hr</span>
+              <span className="text-emerald-750 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-900/30">Price: TBD</span>
+            </div>
           </div>
 
           {/* Exp 4 */}
-          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
-              <Users className="w-5 h-5" />
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+                <Users className="w-5 h-5" />
+              </div>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Volunteer Program</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+                Assist mahouts with shelter management, fodder harvesting, and community outreach.
+              </p>
             </div>
-            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Volunteer Program</h3>
-            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
-              Assist mahouts with shelter management, fodder harvesting, and community outreach.
-            </p>
+            <div className="pt-3 border-t border-stone-100 dark:border-stone-850 flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+              <span>Flexible Slots</span>
+              <span className="text-emerald-750 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-900/30">Price: TBD</span>
+            </div>
           </div>
         </div>
 

@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "द चेन फ्री प्रोजेक्ट | हात्ती संरक्षण अभियान",
-  description: "हात्ती सफारी र सवारीको अन्त्य गर्न तथा हात्तीहरूलाई स्वतन्त्र र सम्मानजनक जीवन प्रदान गर्न सुरु गरिएको अभियानमा सहभागी हुनुहोस्।",
-  keywords: ["हात्ती संरक्षण", "चेन फ्री प्रोजेक्ट", "हात्ती सफारी अन्त्य", "हात्ती आरक्ष", "स्वयंसेवक"],
+  title: "The Chain Free Project | Ethical Elephant Sanctuary",
+  description: "Join our mission to end tourist elephant riding and provide a free, chain-free life for elephants in Sauraha, Chitwan.",
+  keywords: ["elephant sanctuary", "chain free project", "ethical tourism", "sauraha chitwan", "volunteer nepal"],
 };
 
 
