@@ -13,10 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Chain Free Project | Save the Elephants",
-  description: "Join the campaign to end elephant riding and support the transition of working elephants to ethical, free sanctuaries.",
-  keywords: ["elephant conservation", "chain free project", "stop elephant riding", "elephant sanctuary", "volunteer"],
+  title: "द चेन फ्री प्रोजेक्ट | हात्ती संरक्षण अभियान",
+  description: "हात्ती सफारी र सवारीको अन्त्य गर्न तथा हात्तीहरूलाई स्वतन्त्र र सम्मानजनक जीवन प्रदान गर्न सुरु गरिएको अभियानमा सहभागी हुनुहोस्।",
+  keywords: ["हात्ती संरक्षण", "चेन फ्री प्रोजेक्ट", "हात्ती सफारी अन्त्य", "हात्ती आरक्ष", "स्वयंसेवक"],
 };
+
 
 export default function RootLayout({
   children,

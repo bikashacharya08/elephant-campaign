@@ -14,8 +14,9 @@ export default function WhatsAppWidget() {
     >
       <MessageCircle className="w-6 h-6 fill-white" />
       <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-out whitespace-nowrap text-xs font-bold pl-0 group-hover:pl-2">
-        Chat With Us (Whatsapp)
+        Chat with us (WhatsApp)
       </span>
+
     </a>
   );
 }

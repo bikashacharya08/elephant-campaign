@@ -18,5 +18,6 @@ class Volunteer extends Model
         'date',
         'guests',
         'message',
+        'amount',
     ];
 }

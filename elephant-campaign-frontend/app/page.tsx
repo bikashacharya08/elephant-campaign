@@ -1,28 +1,92 @@
-import React from 'react';
-import Image from 'next/image';
-import { Heart, Users, Share2, Compass, Eye, Footprints, Sparkles, Info } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { 
+  Users, 
+  Sparkles, 
+  Info, 
+  Camera, 
+  Gift,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Footprints,
+  Compass,
+  Eye
+} from 'lucide-react';
 import VolunteerForm from '@/components/VolunteerForm';
 import WhatsAppWidget from '@/components/WhatsAppWidget';
+import DonateModal from '@/components/DonateModal';
+
+const GALLERY_ITEMS = [
+  {
+    title: "Foraging in the Forest",
+    subtitle: "Natural Grazing Habitats",
+    description: "Rescued elephants exploring the natural jungle habitats freely without the pressure of tourism.",
+    id: "01"
+  },
+  {
+    title: "Feed Preparation",
+    subtitle: "Nutritional Care",
+    description: "Volunteers and mahouts crafting nutritional grass & molasses bundles to sustain their health.",
+    id: "02"
+  },
+  {
+    title: "Rapti River Bathing",
+    subtitle: "Observation at a Distance",
+    description: "Watching elephants splash and swim naturally in the river from a safe, non-intrusive distance.",
+    id: "03"
+  },
+  {
+    title: "Mahout Training",
+    subtitle: "Empowerment & Education",
+    description: "Empowering local handlers with positive-reinforcement techniques to phase out heavy hooks.",
+    id: "04"
+  },
+  {
+    title: "Volunteer Work",
+    subtitle: "Community Collaboration",
+    description: "Community builders assisting in shelter upkeep, trail building, and spreading local conservation advocacy.",
+    id: "05"
+  },
+  {
+    title: "Conservation Rallies",
+    subtitle: "Ethical Tourism Outreach",
+    description: "Engaging tourist agencies in Sauraha to promote rides-free and chain-free sanctuary practices.",
+    id: "06"
+  }
+];
 
 export default function ElephantCampaignLanding() {
+  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const handlePrevSlide = () => {
+    setActiveSlide((prev) => (prev === 0 ? GALLERY_ITEMS.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = () => {
+    setActiveSlide((prev) => (prev === GALLERY_ITEMS.length - 1 ? 0 : prev + 1));
+  };
+
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-emerald-200">
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-200 font-sans selection:bg-emerald-100 dark:selection:bg-emerald-900 transition-colors duration-300">
       
       {/* HEADER / NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200">
+      <header className="sticky top-0 z-40 bg-white/70 dark:bg-stone-900/70 backdrop-blur-md border-b border-stone-200/60 dark:border-stone-800/40 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-emerald-800 text-lg tracking-tight hover:scale-[1.01] transition-transform duration-200">
-            <span className="text-xl">🐘</span> <span>The Chain Free Project</span>
+          <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-450 text-sm tracking-widest uppercase hover:scale-[1.01] transition-transform duration-250">
+            <span>🐘</span> <span>The Chain Free Project</span>
           </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-stone-600">
-            <a href="#about" className="hover:text-emerald-700 transition-colors duration-200">Our Ethos</a>
-            <a href="#herd" className="hover:text-emerald-700 transition-colors duration-200">Meet the Herd</a>
-            <a href="#experiences" className="hover:text-emerald-700 transition-colors duration-200">Experiences</a>
-            <a href="#gallery" className="hover:text-emerald-700 transition-colors duration-200">Media Hub</a>
+          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+            <a href="#about" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Mission & Goals</a>
+            <a href="#herd" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Rescue Campaign</a>
+            <a href="#experiences" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Experiences</a>
+            <a href="#gallery" className="hover:text-emerald-700 dark:hover:text-emerald-450 transition-colors duration-200">Gallery</a>
           </nav>
           <a 
             href="#volunteer" 
-            className="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.03] active:scale-[0.98]"
+            className="bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-sm"
           >
             Book Visit
           </a>
@@ -30,389 +94,316 @@ export default function ElephantCampaignLanding() {
       </header>
 
       {/* HERO SECTION */}
-      <section className="relative bg-gradient-to-br from-stone-950 via-stone-900 to-emerald-950 text-white py-28 md:py-36 px-4 overflow-hidden">
-        {/* Floating gradient blur orbs for premium visual depth */}
-        <div className="absolute top-12 left-1/4 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl animate-pulse duration-10000"></div>
-        <div className="absolute bottom-8 right-1/4 w-96 h-96 rounded-full bg-emerald-700/5 blur-3xl animate-pulse duration-7000"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(#1f2e22_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
+      <section className="relative bg-gradient-to-b from-stone-900 to-stone-950 dark:from-stone-950 dark:to-stone-900 text-white py-24 md:py-32 px-4 overflow-hidden border-b border-stone-200/30 dark:border-stone-850/30">
+        <div className="absolute inset-0 bg-[radial-gradient(#2d3d31_1px,transparent_1px)] [background-size:20px_20px] opacity-30"></div>
         
-        <div className="relative max-w-4xl mx-auto text-center space-y-8 animate-fadeInUp">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse text-emerald-400" /> Ethical Sanctuary in Sauraha, Nepal
+        <div className="relative max-w-3xl mx-auto text-center space-y-8 animate-fadeInUp">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <Sparkles className="w-3 h-3 text-emerald-400" /> Sauraha, Chitwan • Nepal
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.15]">
-            Born to Rule the Wild Forests, <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Not to Spend Life in Chains.</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.2]">
+            Elephants belong in the wild, <br />
+            <span className="font-semibold text-emerald-400">not bound in heavy chains.</span>
           </h1>
-          <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto font-light leading-relaxed">
-            Welcome to a ride-free, chain-free haven. Meet our rescued elephants, walk alongside them in their natural river habitats, and help us fund a kinder future for Nepal&apos;s elephants.
+          <p className="text-base text-stone-300 max-w-xl mx-auto font-light leading-relaxed">
+            We are building a chain-free sanctuary in Sauraha. By eliminating saddles and restraints, we promote observant experiences—walking alongside elephants, preparing nutrition, and observing river baths.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <a 
               href="#volunteer" 
-              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-stone-950 font-bold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-emerald-500/10 hover:scale-[1.03] active:scale-[0.98] text-center text-sm"
+              className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-lg transition-all duration-200 text-xs uppercase tracking-wider"
             >
-              Book an Ethical Visit
+              Book Inquiries
             </a>
             <a 
               href="#volunteer" 
-              className="bg-transparent hover:bg-white/5 text-white font-semibold border border-stone-600 hover:border-stone-400 px-8 py-4 rounded-lg transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] text-center text-sm"
+              className="bg-transparent hover:bg-white/5 text-white font-semibold border border-stone-700 hover:border-stone-500 px-6 py-3 rounded-lg transition-all duration-200 text-xs uppercase tracking-wider"
             >
-              Apply as a Volunteer
+              Get Involved
             </a>
           </div>
         </div>
       </section>
 
-      {/* SANCTUARY ETHOS SECTION */}
-      <section id="about" className="py-24 max-w-6xl mx-auto px-4">
-        <div className="text-center space-y-2 mb-16">
-          <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Our Core Foundation</span>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight">The Sanctuary Ethos</h2>
-          <div className="h-1 w-12 bg-emerald-600 mx-auto rounded mt-2"></div>
-        </div>
+      {/* MISSION & STRATEGIC GOALS SECTION */}
+      <section id="about" className="py-20 max-w-5xl mx-auto px-4 space-y-16">
         
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-4 animate-fadeInUp">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Heart className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-stone-900">100% Ride-Free & Chain-Free</h3>
-            <p className="text-stone-600 text-sm leading-relaxed">
-              We stand firmly against tourist elephant riding and chains. Our herd spends their days grazing, bathing, and socializing freely in natural enclosures.
-            </p>
+        {/* Core Mission */}
+        <div className="grid md:grid-cols-3 gap-8 items-start border-b border-stone-200/50 dark:border-stone-850/50 pb-16">
+          <div className="md:col-span-1 space-y-1">
+            <span className="text-emerald-700 dark:text-emerald-450 text-[10px] font-bold uppercase tracking-widest">Our Vision</span>
+            <h2 className="text-2xl font-light tracking-tight text-stone-900 dark:text-white">Core Mission</h2>
           </div>
-
-          <div id="donate" className="bg-white p-8 rounded-2xl border border-emerald-500/20 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 space-y-4 ring-2 ring-emerald-600/10 animate-fadeInUp [animation-delay:200ms]">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Share2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-stone-900">Empowering Local Mahouts</h3>
-            <p className="text-stone-600 text-sm leading-relaxed mb-4">
-              True conservation involves communities. Your bookings and donations directly support local elephant handlers, transition them to positive reinforcement care models, and provide food and veterinary supplies.
-            </p>
-            <a 
-              href="https://your-fundraiser-link.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block w-full text-center text-sm font-semibold text-white bg-emerald-800 hover:bg-emerald-900 py-3 rounded-lg transition-colors duration-200 shadow-sm"
-            >
-              Support the Mahouts Fund →
-            </a>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-4 animate-fadeInUp [animation-delay:400ms]">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Users className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-stone-900">Conservation Education</h3>
-            <p className="text-stone-600 text-sm leading-relaxed">
-              We bridge the gap between people and elephants. Visitors learn first-hand about elephant behavior, complex social bonds, and the critical status of Asian elephants in Nepal.
+          <div className="md:col-span-2">
+            <p className="text-lg font-light text-stone-600 dark:text-stone-300 leading-relaxed">
+              To pioneer an ethical, ride-free sanctuary model in Sauraha that frees working elephants from chains and saddles, while establishing a sustainable livelihoods structure for local mahouts through compassionate care methods.
             </p>
           </div>
         </div>
-      </section>
 
-      {/* MEET THE HERD SECTION */}
-      <section id="herd" className="py-24 bg-stone-100/50 border-t border-stone-200 px-4">
-        <div className="max-w-6xl mx-auto space-y-16">
-          <div className="text-center space-y-2">
-            <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Sanctuary Residents</span>
-            <h2 className="text-3xl font-bold text-stone-900 tracking-tight">Meet Our Rescued Herd</h2>
-            <div className="h-1 w-12 bg-emerald-600 mx-auto rounded mt-2"></div>
-            <p className="text-stone-600 max-w-md mx-auto text-sm pt-2">Every elephant in our sanctuary has a history. Meet the gentle giants who now call our chain-free habitat home.</p>
+        {/* Strategic Goals */}
+        <div className="space-y-10">
+          <div className="space-y-1">
+            <span className="text-emerald-700 dark:text-emerald-450 text-[10px] font-bold uppercase tracking-widest">Target Actions</span>
+            <h2 className="text-2xl font-light tracking-tight text-stone-900 dark:text-white">Strategic Goals</h2>
           </div>
-
+          
           <div className="grid md:grid-cols-3 gap-8">
             
-            {/* Elephant 1 - Kali */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
-              <div className="relative aspect-square w-full bg-stone-200">
-                <Image 
-                  src="/elephant-1.jpg" 
-                  alt="Rescued elephant Kali" 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover" 
-                />
-                <div className="absolute top-4 right-4 bg-emerald-700 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full shadow-md">
-                  Gentle Matriarch
-                </div>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-stone-900">Kali</h3>
-                  <p className="text-xs text-stone-500 flex items-center gap-1">
-                    <Info className="w-3.5 h-3.5 text-emerald-600" /> Matriarch · Age 38 · Rescued in 2024
-                  </p>
-                  <p className="text-stone-600 text-sm leading-relaxed pt-2">
-                    Kali spent over 25 years carrying tourists in Chitwan. Today, she is the wise leader of our small herd, known for her calm presence and love for river bathing.
-                  </p>
-                </div>
-                <div className="border-t border-stone-100 pt-4 flex justify-between items-center text-xs font-bold text-emerald-800">
-                  <span>Favorite Activity: River bathing</span>
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px]">Healthy</span>
-                </div>
+            {/* Goal 1 */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-450">01 / Direct Liberation</span>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-base">Sanctuary & Safety</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-xs leading-relaxed font-light">
+                Directly acquiring working elephants from commercial tourism to provide permanent shelter, medical rehabilitation, and chain-free forest grazing.
+              </p>
+            </div>
+
+            {/* Goal 2 */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-450">02 / Mahout Empowerment</span>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-base">Cooperative Livelihoods</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-xs leading-relaxed font-light">
+                Employing local handlers (mahouts) and training them in positive reinforcement techniques, transforming traditional restraint habits into cooperative care.
+              </p>
+              <div className="pt-2">
+                <a 
+                  href="https://your-fundraiser-link.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-450 hover:underline"
+                >
+                  Support training fund <ArrowRight className="w-3 h-3" />
+                </a>
               </div>
             </div>
 
-            {/* Elephant 2 - Lucky */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
-              <div className="relative aspect-square w-full bg-stone-200">
-                <Image 
-                  src="/elephant-2.jpg" 
-                  alt="Rescued elephant Lucky" 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover" 
-                />
-                <div className="absolute top-4 right-4 bg-emerald-700 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full shadow-md">
-                  Energetic & Playful
-                </div>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-stone-900">Lucky</h3>
-                  <p className="text-xs text-stone-500 flex items-center gap-1">
-                    <Info className="w-3.5 h-3.5 text-emerald-600" /> Juvenile · Age 12 · Rescued in 2025
-                  </p>
-                  <p className="text-stone-600 text-sm leading-relaxed pt-2">
-                    Lucky was rescued as a young working elephant. Filled with curiosity, he spends his time foraging in the bamboo groves and learning social behaviors from Kali.
-                  </p>
-                </div>
-                <div className="border-t border-stone-100 pt-4 flex justify-between items-center text-xs font-bold text-emerald-800">
-                  <span>Favorite Activity: Mud sliding</span>
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px]">Active</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Elephant 3 - Chanchal */}
-            <div className="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
-              <div className="relative aspect-square w-full bg-stone-200">
-                <Image 
-                  src="/elephant-3.jpg" 
-                  alt="Rescued elephant Chanchal" 
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover" 
-                />
-                <div className="absolute top-4 right-4 bg-emerald-700 text-white text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full shadow-md">
-                  Calm Observer
-                </div>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-stone-900">Chanchal</h3>
-                  <p className="text-xs text-stone-500 flex items-center gap-1">
-                    <Info className="w-3.5 h-3.5 text-emerald-600" /> Matriarch · Age 45 · Rescued in 2023
-                  </p>
-                  <p className="text-stone-600 text-sm leading-relaxed pt-2">
-                    Chanchal is the quietest member of our herd. After working for decades, she was transitioned to the sanctuary, where she enjoys slow grazing and dust baths.
-                  </p>
-                </div>
-                <div className="border-t border-stone-100 pt-4 flex justify-between items-center text-xs font-bold text-emerald-800">
-                  <span>Favorite Activity: Grass wrapping</span>
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-[10px]">Peaceful</span>
-                </div>
-              </div>
+            {/* Goal 3 */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-450">03 / Educational Encounters</span>
+              <h3 className="font-semibold text-stone-900 dark:text-white text-base">Hands-Off Advocacy</h3>
+              <p className="text-stone-500 dark:text-stone-400 text-xs leading-relaxed font-light">
+                Providing visitors with educational, observant experiences (nutrition prep, walking, bathing) to inspire conservation awareness without animal stress.
+              </p>
             </div>
 
           </div>
+        </div>
+
+      </section>
+
+      {/* MEET THE HERD SECTION (SINGLE RESCUE CARD) */}
+      <section id="herd" className="py-20 bg-stone-100/40 dark:bg-stone-900/20 border-t border-b border-stone-200/50 dark:border-stone-850/50 px-4 transition-colors">
+        <div className="max-w-5xl mx-auto space-y-12">
+          
+          <div className="text-center space-y-2">
+            <span className="text-emerald-700 dark:text-emerald-450 text-[10px] font-bold uppercase tracking-widest">Active Campaign</span>
+            <h2 className="text-2xl font-light tracking-tight text-stone-900 dark:text-white">Elephant Rescue Fund</h2>
+            <p className="text-stone-500 dark:text-stone-450 max-w-md mx-auto text-xs font-light">
+              Help buy out and liberate a working tourist elephant in Sauraha. 100% of contributions go directly to rescue and veterinary care.
+            </p>
+          </div>
+
+          <div className="max-w-md mx-auto">
+            {/* Centered Single Elephant Card */}
+            <div className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-stone-800/80 shadow-md flex flex-col">
+              <div className="relative aspect-video w-full bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center border-b border-stone-200/60 dark:border-stone-850/50 text-stone-400 dark:text-stone-500 p-6 gap-2 text-center">
+                <Camera className="w-10 h-10 text-stone-300 dark:text-stone-800" />
+                <span className="text-xs font-medium">Rescue in Progress • Photo Coming Soon</span>
+                <span className="text-[9px] text-stone-400 dark:text-stone-600 max-w-xs font-light">Elephant details will be updated as soon as rescue contracts are finalized.</span>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-stone-800 dark:text-white">Upcoming Rescue Candidate</h3>
+                    <span className="bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider animate-pulse">
+                      Active Pledge
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-stone-500 dark:text-stone-400 flex items-center gap-1">
+                    <Info className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-500" /> Campaign Goal: Rs. 2,000,000
+                  </p>
+                  <p className="text-stone-500 dark:text-stone-400 text-xs leading-relaxed font-light">
+                    Your contribution guarantees direct liberation from commercial riding tours and provides full lifetime shelter support at the sanctuary.
+                  </p>
+                </div>
+                
+                <button 
+                  onClick={() => setIsDonateModalOpen(true)}
+                  className="w-full bg-emerald-800 hover:bg-emerald-900 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  <Gift className="w-4 h-4" />
+                  Donate to Rescue this Elephant
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* ETHICAL VISITOR EXPERIENCES SECTION */}
-      <section id="experiences" className="py-24 max-w-6xl mx-auto px-4 border-t border-stone-200">
-        <div className="text-center space-y-2 mb-16">
-          <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Visitor Programs</span>
-          <h2 className="text-3xl font-bold text-stone-900 tracking-tight">Ethical Sanctuary Experiences</h2>
-          <div className="h-1 w-12 bg-emerald-600 mx-auto rounded mt-2"></div>
-          <p className="text-stone-600 max-w-md mx-auto text-sm pt-2">Interact with elephants respectfully. No riding, no hooks, no forced shows. Just natural, compassionate observation.</p>
+      <section id="experiences" className="py-20 max-w-5xl mx-auto px-4 space-y-12">
+        
+        <div className="text-center space-y-2">
+          <span className="text-emerald-700 dark:text-emerald-450 text-[10px] font-bold uppercase tracking-widest">Sauraha Encounters</span>
+          <h2 className="text-2xl font-light tracking-tight text-stone-900 dark:text-white">Educational Program</h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Experience 1 */}
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Footprints className="w-6 h-6" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Exp 1 */}
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+              <Footprints className="w-5 h-5" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-stone-900">Jungle Walks Alongside Elephants</h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Stroll side-by-side with our elephants in Sauraha&apos;s buffer zone. Walk at their pace, watch them forage naturally, and feel the magic of their gentle presence.
-              </p>
-            </div>
-            <div className="text-xs text-stone-400">Duration: 2 Hours · Small Group Sizes</div>
+            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Forest Walks</h3>
+            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+              Walk alongside elephants through natural pathways. Observe foraging habits up close from a safe distance.
+            </p>
           </div>
 
-          {/* Experience 2 */}
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Compass className="w-6 h-6" />
+          {/* Exp 2 */}
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+              <Compass className="w-5 h-5" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-stone-900">Feed Preparation & Nutrition</h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Join our mahouts in preparing nutritious packages (kuchi) of grass, salt, and molasses, then feed them directly. Learn about their custom veterinary care and diet.
-              </p>
-            </div>
-            <div className="text-xs text-stone-400">Duration: 1.5 Hours · Family Friendly</div>
+            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Feed Preparation</h3>
+            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+              Craft supplementary food bundles using grass, salt, and molasses, and feed them with care.
+            </p>
           </div>
 
-          {/* Experience 3 */}
-          <div className="bg-white p-8 rounded-2xl border border-stone-200/80 shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 space-y-5">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
-              <Eye className="w-6 h-6" />
+          {/* Exp 3 */}
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+              <Eye className="w-5 h-5" />
             </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-stone-900">River Bathing Observation</h3>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                Accompany the herd down to the river bank. Watch from a safe, respectful distance as the elephants splash, socialize, and scrub themselves in the cool waters.
-              </p>
+            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Bathing Observation</h3>
+            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+              Observe elephants splash and bathe in the Rapti River. A natural highlight for photography.
+            </p>
+          </div>
+
+          {/* Exp 4 */}
+          <div className="border border-stone-200/60 dark:border-stone-850/50 p-6 rounded-xl space-y-3 bg-white dark:bg-stone-900/50">
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-700 dark:text-emerald-450">
+              <Users className="w-5 h-5" />
             </div>
-            <div className="text-xs text-stone-400">Duration: 1 Hour · Highly Photogenic</div>
+            <h3 className="font-semibold text-stone-900 dark:text-white text-sm">Volunteer Program</h3>
+            <p className="text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed font-light">
+              Assist mahouts with shelter management, fodder harvesting, and community outreach.
+            </p>
           </div>
         </div>
+
       </section>
 
-      {/* MEDIA / GALLERY SECTION */}
-      <section id="gallery" className="py-24 bg-stone-100 border-y border-stone-200 px-4">
-        <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-2">
-            <span className="text-emerald-700 text-xs font-bold uppercase tracking-wider">Visual Stories</span>
-            <h2 className="text-3xl font-bold text-stone-900 tracking-tight font-sans">Campaign Media Hub</h2>
-            <div className="h-1 w-12 bg-emerald-600 mx-auto rounded mt-2"></div>
-            <p className="text-stone-600 max-w-md mx-auto text-sm pt-2">Visual truth and awareness directly from our monitoring efforts.</p>
-          </div>
+      {/* MEDIA / GALLERY SECTION (SLIDING CAROUSEL) */}
+      <section id="gallery" className="py-20 bg-stone-100/40 dark:bg-stone-900/20 border-t border-b border-stone-200/50 dark:border-stone-850/50 px-4 transition-colors">
+        <div className="max-w-3xl mx-auto space-y-8">
           
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            
-            {/* Gallery Image 1 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-1.jpg" 
-                alt="Rescued elephant in sanctuary" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Sanctuary Life</p>
-                  <p className="text-sm font-semibold mt-0.5">Peaceful morning bath in the ethical river sanctuary.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Image 2 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-2.jpg" 
-                alt="Rescued elephant in sanctuary" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Wild Roaming</p>
-                  <p className="text-sm font-semibold mt-0.5">Roaming freely in the protected dense bamboo forests.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Image 3 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-3.jpg" 
-                alt="Rescued elephant in sanctuary" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Safe Herd</p>
-                  <p className="text-sm font-semibold mt-0.5">A social herd bonding in safe, chain-free environments.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Image 4 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-4.jpg" 
-                alt="Closer shot of elephant trunk" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Connection</p>
-                  <p className="text-sm font-semibold mt-0.5">Close-up connection showing the gentle, majestic giant.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Image 5 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-5.jpg" 
-                alt="Closer shot of elephant trunk" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Playtime</p>
-                  <p className="text-sm font-semibold mt-0.5">Natural foraging and playtime in lush tropical grasslands.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Gallery Image 6 */}
-            <div className="relative group aspect-video bg-stone-200 rounded-xl overflow-hidden border border-stone-300 shadow-sm cursor-pointer">
-              <Image 
-                src="/elephant-6.jpg" 
-                alt="Closer shot of elephant trunk" 
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Reunion</p>
-                  <p className="text-sm font-semibold mt-0.5">Reunited elephant families living in complete freedom.</p>
-                </div>
-              </div>
-            </div>
-
+          <div className="text-center space-y-2">
+            <span className="text-emerald-700 dark:text-emerald-450 text-[10px] font-bold uppercase tracking-widest">Visual updates</span>
+            <h2 className="text-2xl font-light tracking-tight text-stone-900 dark:text-white">Sanctuary Gallery</h2>
+            <p className="text-stone-500 dark:text-stone-400 text-xs font-light">Flip through updates of our ongoing campaign.</p>
           </div>
+
+          {/* Image Slider Container */}
+          <div className="relative bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row transition-all duration-300">
+            
+            {/* Left Image Placeholder */}
+            <div className="sm:w-1/2 aspect-video sm:aspect-auto bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-6 text-stone-450 dark:text-stone-500 border-b sm:border-b-0 sm:border-r border-stone-200/60 dark:border-stone-850/50 min-h-[220px]">
+              <Camera className="w-10 h-10 text-stone-300 dark:text-stone-800" />
+              <span className="text-[10px] font-bold tracking-widest uppercase mt-2">Coming Soon</span>
+              <span className="text-[9px] text-stone-400 dark:text-stone-605 mt-1">Image {GALLERY_ITEMS[activeSlide].id}</span>
+            </div>
+
+            {/* Right Content */}
+            <div className="sm:w-1/2 p-8 flex flex-col justify-between min-h-[260px] space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-450">
+                    {GALLERY_ITEMS[activeSlide].subtitle}
+                  </span>
+                  <span className="text-[10px] text-stone-450 dark:text-stone-500 font-bold font-mono">
+                    {GALLERY_ITEMS[activeSlide].id} / 06
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-stone-800 dark:text-white">
+                  {GALLERY_ITEMS[activeSlide].title}
+                </h3>
+                <p className="text-stone-550 dark:text-stone-400 text-xs leading-relaxed font-light">
+                  {GALLERY_ITEMS[activeSlide].description}
+                </p>
+              </div>
+
+              {/* Slider Controls */}
+              <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-850 pt-4">
+                <div className="flex gap-2">
+                  {GALLERY_ITEMS.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveSlide(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                        activeSlide === index 
+                          ? 'bg-emerald-750 dark:bg-emerald-500 w-4' 
+                          : 'bg-stone-200 dark:bg-stone-800 hover:bg-stone-300'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handlePrevSlide}
+                    className="p-1.5 border border-stone-200 dark:border-stone-800 rounded-lg bg-stone-50 hover:bg-stone-100 dark:bg-stone-950 dark:hover:bg-stone-850 text-stone-600 dark:text-stone-400 transition"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNextSlide}
+                    className="p-1.5 border border-stone-200 dark:border-stone-800 rounded-lg bg-stone-50 hover:bg-stone-100 dark:bg-stone-950 dark:hover:bg-stone-850 text-stone-600 dark:text-stone-400 transition"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* VOLUNTEER & BOOKING INQUIRY FORM */}
-      <section id="volunteer" className="py-24 max-w-xl mx-auto px-4">
+      <section id="volunteer" className="py-20 max-w-xl mx-auto px-4">
         <VolunteerForm />
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-stone-900 text-stone-400 py-16 px-4 border-t border-stone-800 text-sm">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <p>© 2026 The Chain Free Project. Dedicated to ethical, ride-free elephant sanctuary experiences.</p>
-          <div className="flex gap-8">
-            <a href="#about" className="hover:text-white transition-colors duration-200">About Our Ethos</a>
-            <a href="#herd" className="hover:text-white transition-colors duration-200">Meet Our Herd</a>
-            <a href="#volunteer" className="hover:text-white transition-colors duration-200">Bookings / Volunteers</a>
+      <footer className="bg-stone-900 dark:bg-stone-950 text-stone-450 dark:text-stone-500 py-16 px-4 border-t border-stone-850 dark:border-stone-900 transition-colors text-xs text-center font-light">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <p>© 2026 The Chain Free Project. Local movement for ethical elephant welfare and conservation.</p>
+          <div className="flex gap-6 uppercase tracking-wider text-[10px] font-bold">
+            <a href="#about" className="hover:text-white dark:hover:text-stone-200 transition-colors duration-200">Our Mission</a>
+            <a href="#herd" className="hover:text-white dark:hover:text-stone-200 transition-colors duration-200">Rescue Campaign</a>
+            <a href="#volunteer" className="hover:text-white dark:hover:text-stone-200 transition-colors duration-200">Bookings</a>
           </div>
         </div>
       </footer>
 
       {/* FLOATING WHATSAPP CHAT WIDGET */}
       <WhatsAppWidget />
+
+      {/* INTERACTIVE DONATION MODAL */}
+      <DonateModal 
+        isOpen={isDonateModalOpen} 
+        onClose={() => setIsDonateModalOpen(false)} 
+        elephantName="Upcoming Rescue Candidate" 
+      />
 
     </div>
   );

@@ -178,4 +178,44 @@ class VolunteerTest extends TestCase
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['name']);
     }
+
+    /**
+     * Valid donation request creates a volunteer record with amount and returns 201.
+     */
+    public function test_donation_signup_with_valid_data(): void
+    {
+        $response = $this->postJson('/api/volunteer', [
+            'name'    => 'Donator Name',
+            'email'   => 'donator@example.com',
+            'type'    => 'donation',
+            'amount'  => 1500.50,
+            'message' => 'I want to support the elephant purchase fundraising!',
+        ]);
+
+        $response->assertStatus(201)
+                 ->assertJson(['message' => 'Volunteer securely saved!']);
+
+        $this->assertDatabaseHas('volunteers', [
+            'name'    => 'Donator Name',
+            'email'   => 'donator@example.com',
+            'type'    => 'donation',
+            'amount'  => 1500.50,
+        ]);
+    }
+
+    /**
+     * Donation request fails when amount is missing or invalid.
+     */
+    public function test_donation_fails_without_amount(): void
+    {
+        $response = $this->postJson('/api/volunteer', [
+            'name'    => 'Donator Name',
+            'email'   => 'donator@example.com',
+            'type'    => 'donation',
+            'message' => 'No amount given',
+        ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonValidationErrors(['amount']);
+    }
 }
