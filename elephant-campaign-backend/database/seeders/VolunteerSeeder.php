@@ -45,5 +45,22 @@ class VolunteerSeeder extends Seeder
             'guests' => 2,
             'message' => 'We are interested in the food preparation and feeding experience. Can we book a morning slot?',
         ]);
+
+        // Sample Donation requests
+        Volunteer::create([
+            'name' => 'Michael Chang',
+            'email' => 'michael.c@example.com',
+            'type' => 'donation',
+            'amount' => 5000.00,
+            'message' => 'Pledging Rs. 5,000 for the rescue fund of the upcoming elephant! Let us make Sauraha chain-free.',
+        ]);
+
+        Volunteer::create([
+            'name' => 'Sarah Connor',
+            'email' => 'sarah.c@example.com',
+            'type' => 'donation',
+            'amount' => 1500.00,
+            'message' => 'Happy to support the mahout training and rescue campaign.',
+        ]);
     }
 }
